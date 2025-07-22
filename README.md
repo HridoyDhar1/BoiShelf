@@ -54,6 +54,23 @@
 
 ---
 
+
+## ⚙️ Architecture
+
+The app uses a hybrid **GetX + BLoC** architecture for optimized modularity, readability, and separation of concerns.
+
+##🧠 Future Plans
+✅ Push Notifications (Firebase Cloud Messaging)
+✅ Book Delivery Tracking
+✅ In-app Video Preview for Book Condition
+✅ Stripe/RazorPay Payment Gateway
+
+
+
+
+##⭐ Show Your Support
+Give a ⭐️ if you like the project and want to support it!
+
 ## ⚙️ How to Run
 
 1. **Clone the repo**
@@ -288,15 +305,5 @@ flutter run
  
 
             
-🧠 Future Plans
-✅ Push Notifications (Firebase Cloud Messaging)
-✅ Book Delivery Tracking
-✅ In-app Video Preview for Book Condition
-✅ Stripe/RazorPay Payment Gateway
 
-
-
-
-⭐ Show Your Support
-Give a ⭐️ if you like the project and want to support it!
 
