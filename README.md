@@ -47,6 +47,9 @@
 ---
 
 ## 📸 Screenshots
+
+| Login | Home | Video Playback |
+|-------|------|----------------|
 > _Coming Soon_ – Add GIFs or screenshots of your app in action here to attract users and contributors.
 
 ---
@@ -54,9 +57,16 @@
 ## ⚙️ How to Run
 
 1. **Clone the repo**
-   ```bash
-   git clone https://github.com/yourusername/boishelf.git
-   Directory structure:
+ 
+```bash
+git clone https://github.com/yourusername/UIPtv.git
+cd UIPtv
+flutter pub get
+flutter run
+
+##Directory structure:
+
+
 └── hridoydhar1-boishelf.git/
     ├── README.md
     ├── analysis_options.yaml
@@ -272,6 +282,10 @@
             ├── win32_window.cpp
             └── win32_window.h
 
+
+
+   
+ 
 
             
 🧠 Future Plans
