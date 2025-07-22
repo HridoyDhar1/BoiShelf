@@ -59,6 +59,9 @@
 
 The app uses a hybrid **GetX + BLoC** architecture for optimized modularity, readability, and separation of concerns.
 
+![boishelf](https://github.com/user-attachments/assets/4ff96836-7b22-46fd-9938-3ca235475072)
+
+
 ##🧠 Future Plans
 ✅ Push Notifications (Firebase Cloud Messaging)
 ✅ Book Delivery Tracking
