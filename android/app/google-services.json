@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "933871682273",
+    "firebase_url": "https://gold-manager-update-apk-default-rtdb.firebaseio.com",
+    "project_id": "gold-manager-update-apk",
+    "storage_bucket": "gold-manager-update-apk.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:933871682273:android:2daf7385d69e5e56cd6da0",
+        "android_client_info": {
+          "package_name": "com.example.book"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "933871682273-n14tf1cll4gsgclsfjmcrt5742i76ttr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDbuOhm0rEXFt2uoE9UGucAuq7P5Vl5FgY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "933871682273-n14tf1cll4gsgclsfjmcrt5742i76ttr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:933871682273:android:44ed965ac6531a33cd6da0",
+        "android_client_info": {
+          "package_name": "goldshopmanager.com.goldshop_manager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "933871682273-n14tf1cll4gsgclsfjmcrt5742i76ttr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDbuOhm0rEXFt2uoE9UGucAuq7P5Vl5FgY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "933871682273-n14tf1cll4gsgclsfjmcrt5742i76ttr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
