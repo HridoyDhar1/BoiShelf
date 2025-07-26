@@ -1,81 +1,46 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
-static const String name='chat_screen';
+  final String receiverId;
+  final String receiverName;
+  final String receiverImage;
+  final Map<String, dynamic> postData;
+  const ChatScreen({
+    super.key,
+    required this.receiverId,
+    required this.receiverName,
+    required this.receiverImage, required this.postData,
+  });
+  factory ChatScreen.fromArgs(Map<String, dynamic>? args) {
+    args ??= {};
+    return ChatScreen(
+      receiverId: args['receiverId'] ?? '',
+      receiverName: args['receiverName'] ?? 'Unknown',
+      receiverImage: args['receiverImage'] ?? '',
+      postData: args['postData'] ?? {},
+    );
+  }
+
+  static const String name='chat_screen';
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  late String receiverId;
-  late String receiverName;
-  String? chatId;
-  late Map<String, dynamic>? postData;
-  final currentUid = FirebaseAuth.instance.currentUser!.uid;
   final TextEditingController _messageController = TextEditingController();
+  final currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
-  @override
-  void initState() {
-    super.initState();
-    final args = Get.arguments as Map<String, dynamic>;
-    receiverId = args['receiverId'];
-    receiverName = args['receiverName'];
-    chatId = args['chatId'];
-    _initChat();
-    postData = args['postData'];
-  }
+  void sendMessage() {
+    if (_messageController.text.trim().isEmpty) return;
 
-  Future<void> _initChat() async {
-    // If chatId is not provided, create/find chat document for these two users
-    if (chatId == null) {
-      final chatQuery = await FirebaseFirestore.instance
-          .collection('chats')
-          .where('users', arrayContains: currentUid)
-          .get();
-
-      for (var doc in chatQuery.docs) {
-        final users = List<String>.from(doc['users']);
-        if (users.contains(receiverId)) {
-          chatId = doc.id;
-          setState(() {});
-          return;
-        }
-      }
-
-      // No chat found, create new
-      final newChatDoc = await FirebaseFirestore.instance.collection('chats').add({
-        'users': [currentUid, receiverId],
-        'lastMessage': '',
-        'lastTimestamp': FieldValue.serverTimestamp(),
-      });
-      chatId = newChatDoc.id;
-      setState(() {});
-    }
-  }
-
-  Future<void> _sendMessage() async {
-    final text = _messageController.text.trim();
-    if (text.isEmpty || chatId == null) return;
-
-    final messagesRef = FirebaseFirestore.instance
-        .collection('chats')
-        .doc(chatId)
-        .collection('messages');
-
-    await messagesRef.add({
-      'senderId': currentUid,
-      'text': text,
+    FirebaseFirestore.instance.collection('chats').add({
+      'senderId': currentUserId,
+      'receiverId': widget.receiverId,
+      'message': _messageController.text.trim(),
       'timestamp': FieldValue.serverTimestamp(),
-    });
-
-    // Update last message info on chat doc
-    await FirebaseFirestore.instance.collection('chats').doc(chatId).update({
-      'lastMessage': text,
-      'lastTimestamp': FieldValue.serverTimestamp(),
     });
 
     _messageController.clear();
@@ -83,105 +48,120 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (chatId == null) {
-      // Waiting for chatId to load
-      return Scaffold(
-        appBar: AppBar(title: Text(receiverName)),
-        body: const Center(child: CircularProgressIndicator()),
-      );
-    }
-
     return Scaffold(
-      appBar: AppBar(title: Text(receiverName)),
+      appBar: AppBar(
+        title: Row(
+          children: [
+            CircleAvatar(backgroundImage: NetworkImage(widget.receiverImage)),
+            const SizedBox(width: 10),
+            Text(widget.receiverName),
+          ],
+        ),
+      ),
       body: Column(
         children: [
           _buildPostPreview(),
           Expanded(
-            child: StreamBuilder<QuerySnapshot>(
+            child: StreamBuilder(
               stream: FirebaseFirestore.instance
                   .collection('chats')
-                  .doc(chatId)
-                  .collection('messages')
                   .orderBy('timestamp', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
 
-                final docs = snapshot.data!.docs;
+                final allMessages = snapshot.data!.docs;
+                final messages = allMessages.where((doc) {
+                  final sender = doc['senderId'];
+                  final receiver = doc['receiverId'];
+                  return (sender == currentUserId && receiver == widget.receiverId) ||
+                      (sender == widget.receiverId && receiver == currentUserId);
+                }).toList();
+
                 return ListView.builder(
                   reverse: true,
-                  itemCount: docs.length,
+                  itemCount: messages.length,
                   itemBuilder: (context, index) {
-                    final message = docs[index];
-                    final isMe = message['senderId'] == currentUid;
-                    return Container(
+                    final data = messages[index];
+                    final isMe = data['senderId'] == currentUserId;
+                    return Align(
                       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       child: Container(
+                        padding: const EdgeInsets.all(10),
+                        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 12),
                         decoration: BoxDecoration(
-                          color: isMe ? Colors.blueAccent : Colors.grey[300],
-                          borderRadius: BorderRadius.circular(12),
+                          color: isMe ? Colors.blue[100] : Colors.grey[300],
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                        child: Text(
-                          message['text'],
-                          style: TextStyle(color: isMe ? Colors.white : Colors.black),
-                        ),
+                        child: Text(data['message']),
                       ),
                     );
                   },
                 );
               },
             ),
+
           ),
-          const Divider(height: 1),
-          Container(
-            color: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
                     controller: _messageController,
                     decoration: const InputDecoration(
-                      hintText: "Type a message...",
-                      border: InputBorder.none,
+                      hintText: 'Type a message...',
+                      border: OutlineInputBorder(),
                     ),
-                    onSubmitted: (_) => _sendMessage(),
                   ),
                 ),
+                const SizedBox(width: 8),
                 IconButton(
-                  icon: const Icon(Icons.send, color: Colors.blueAccent),
-                  onPressed: _sendMessage,
+                  icon: const Icon(Icons.send),
+                  onPressed: sendMessage,
                 ),
               ],
             ),
-          ),
+          )
         ],
       ),
     );
   }
   Widget _buildPostPreview() {
-    if (postData == null) return const SizedBox.shrink();
+    final post = widget.postData;
+    final images = post['images'] as List?;
 
-    final images = postData!['images'] as List<dynamic>? ?? [];
-    final imageUrl = images.isNotEmpty ? images[0] : null;
-    final bookName = postData!['book_name'] ?? '';
-    final price = postData!['price'] ?? '';
-    final condition = postData!['location'] ?? '';
-
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: ListTile(
-        leading: imageUrl != null
-            ? ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: Image.network(imageUrl, width: 50, height: 150, fit: BoxFit.cover),
-        )
-            : null,
-        title: Text(bookName, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text('Price: ৳$price\nCondition: $condition'),
+    return Container(
+      margin: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.grey[100],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (images != null && images.isNotEmpty)
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.network(
+                images[0],
+                height: 160,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+            ),
+          const SizedBox(height: 8),
+          Text(
+            post['book_name'] ?? 'Unknown Title',
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+          const SizedBox(height: 4),
+          Text("৳ ${post['price']?.toString() ?? '0'}"),
+          const SizedBox(height: 4),
+          Text("Condition: ${post['condition'] ?? ''}"),
+        ],
       ),
     );
   }

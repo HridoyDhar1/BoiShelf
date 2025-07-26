@@ -3,8 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:get/get.dart';
 
+
+import '../../../Chat/presentation/chat_screen.dart';
 import '../../../Saved/presentaion/controller/book_controller.dart';
 import '../../../explore/data/model/book_model.dart';
 
@@ -23,6 +24,9 @@ class _BookPostCardState extends State<BookPostCard> {
   bool isSaved = false;
   bool isMap = false;
   late final String postOwnerUid;
+  double? distanceInKm;
+  String profileImage = "";
+  String profileName = "";
 
   Future<Position> getCurrentLocation() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -65,7 +69,7 @@ class _BookPostCardState extends State<BookPostCard> {
   late PageController _pagecontroller;
   int _currentPage = 0;
   bool isLoading = true;
-  String profileImage = "";
+
 
   @override
   void initState() {
@@ -75,40 +79,56 @@ class _BookPostCardState extends State<BookPostCard> {
     isSaved = BookmarkManager().isBookmarked(widget.book);
     _pagecontroller = PageController();
     loadProfileData();
+    calculateDistanceToPost();
   }
-
-  Future<void> loadProfileData() async {
-    if (postOwnerUid.isEmpty) {
-      debugPrint("No post owner UID found.");
-      setState(() => isLoading = false);
-      return;
-    }
-
+  Future<void> calculateDistanceToPost() async {
     try {
-      final doc = await FirebaseFirestore.instance.collection('Profile').doc(postOwnerUid).get();
-      final data = doc.data();
-      if (data != null) {
-        _nameController.text = data['name'] ?? "";
-        profileImage = data['image_url'] ?? "";
-      } else {
-        debugPrint("No profile data found for UID: $postOwnerUid");
+      final currentPosition = await getCurrentLocation();
+      double? postLat = widget.data['latitude'];
+      double? postLng = widget.data['longitude'];
+
+      if (postLat != null && postLng != null) {
+        double distanceInMeters = Geolocator.distanceBetween(
+          currentPosition.latitude,
+          currentPosition.longitude,
+          postLat,
+          postLng,
+        );
+
+        setState(() {
+          distanceInKm = double.parse((distanceInMeters / 1000).toStringAsFixed(2));
+        });
       }
     } catch (e) {
-      debugPrint("Error loading profile data: $e");
+      debugPrint("Distance calculation error: $e");
     }
+  }
 
+
+  Future<void> loadProfileData() async {
+    final uid = widget.data['uid'];
+    final doc = await FirebaseFirestore.instance.collection('Profile').doc(uid).get();
+    final data = doc.data();
+    if (data != null) {
+      profileName = data['name'] ?? "User";
+      profileImage = data['image_url'] ?? "";
+    }
     setState(() => isLoading = false);
   }
+
 
   @override
   Widget build(BuildContext context) {
     final List images = widget.data['images'] ?? [];
 
     return Card(
-      color: const Color(0xffF7FAFF),
+      color: Colors.white,
+
       margin: const EdgeInsets.symmetric(vertical: 12),
       elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      shape: RoundedRectangleBorder(
+
+        borderRadius: BorderRadius.circular(15),),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -231,70 +251,59 @@ class _BookPostCardState extends State<BookPostCard> {
                     isLoved?Icons.favorite:Icons.favorite_border,
                     color: isLoved ? Colors.red : Colors.grey[600],
                   ),
-                  // onPressed: () {
-                  //   final currentUid = FirebaseAuth.instance.currentUser?.uid;
-                  //
-                  //   if (currentUid == postOwnerUid) {
-                  //     // Optional: Show message or do nothing
-                  //     ScaffoldMessenger.of(context).showSnackBar(
-                  //       const SnackBar(content: Text("You can't chat with yourself.")),
-                  //     );
-                  //     return;
-                  //   }
-                  //   setState(() {
-                  //
-                  //     isLoved=!isLoved;
-                  //   });
-                  //
-                  // if(isLoved){
-                  //   Get.toNamed("/chat_screen", arguments: {
-                  //     "receiverId": postOwnerUid,
-                  //     "receiverName": _nameController.text.isNotEmpty
-                  //         ? _nameController.text
-                  //         : "User",
-                  //   });
-                  // }
-                  // },
-                    onPressed: () async {
-                      final currentUid = FirebaseAuth.instance.currentUser?.uid;
 
-                      if (currentUid == postOwnerUid) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("You can't chat with yourself.")),
+
+                    onPressed: () {
+                      final currentUser = FirebaseAuth.instance.currentUser;
+                      if (currentUser == null) return;
+
+                      final receiverId = widget.data['uid'];
+                      final receiverName = profileName;
+                      final receiverImage = profileImage;
+
+                      if (receiverId != currentUser.uid) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                ChatScreen(
+                                  receiverId: receiverId,
+                                  receiverName: receiverName,
+                                  receiverImage: receiverImage,
+                                  postData:widget.data
+                                ),
+                          ),
                         );
-                        return;
                       }
-
-                      setState(() {
-                        isLoved = !isLoved;
-                      });
-
-                      if (isLoved) {
-                        // Navigate to chat screen and wait until it is popped
-                        final result = await Get.toNamed("/chat_screen", arguments: {
-                          "receiverId": postOwnerUid,
-                          "receiverName": _nameController.text.isNotEmpty
-                              ? _nameController.text
-                              : "User",
-                          "postData": widget.data,
-                        });
-
-                        // When returning from chat screen, reload chat list or update UI
-                        if (result == true) {
-                          // For example, you can notify a chat controller to refresh
-                          // Or setState here to refresh data
-                          // e.g., chatController.loadChats();
-                          debugPrint("Returned from chat screen, refresh chat list");
-                          setState(() {});
-                        }
-                      }
-                    }
-
+                    }),
+                Row(
+                  children: [
+                    Icon(
+                      isMap ? Icons.location_city : Icons.location_on,
+                      color: Colors.red,
+                    ),
+                    const SizedBox(width: 6),
+                    if (distanceInKm != null)
+                      Text(
+                        "$distanceInKm km",
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black87,
+                        ),
+                      )
+                    else
+                      const Text(
+                        "Calculating...",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontStyle: FontStyle.italic,
+                          color: Colors.grey,
+                        ),
+                      ),
+                  ],
                 ),
-                Icon(
-                  isMap ? Icons.location_city : Icons.location_on,
-                  color: Colors.red,
-                ),
+
               ],
             ),
           ),

@@ -1,14 +1,21 @@
 
 
-import 'package:book/feature/Auth/presentation/screen/signup_screen.dart';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/constant/app_color.dart';
+import '../../../../core/constant/app_images.dart';
+import '../../../../core/widget/custom_button.dart';
 import '../../../../core/widget/custom_passwordfield.dart';
-import '../../../../core/widget/custom_textfield.dart';
+
+import '../../../../core/widget/soial_icon.dart';
+
+import '../../../sell/presentation/widget/text_field.dart';
 import '../controller/auth_controller.dart';
+
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -50,31 +57,19 @@ class _LoginScreenState extends State<LoginScreen> {
 
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
+
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 100),
-                Text(
-                  "ধন্যবাদ,",
-                  style: TextStyle(
-
-                    color: Colors.black87,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  "ফিরে আসার জন্য স্বাগতম!",
-                  style: TextStyle(
-
-                    color: Colors.black87,
-                    fontWeight: FontWeight.w200,
-                  ),
-                ),
+                const SizedBox(height: 20),
+                Center(child: Image.asset(AssetImages.appLogoOne,height: 200,width: 200,)),
+                //
                 const SizedBox(height: 20),
 
                 // Display message if no internet connection
@@ -83,29 +78,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.all(10.0),
                     color: Colors.redAccent,
                     child: const Text(
-                      'ইন্টারনেট সংযোগ নেই। অনুগ্রহ করে ইন্টারনেটে সংযোগ করুন।',
+                      'No internet connection.Please turn on internet',
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
                 const SizedBox(height: 20),
 
-                CustomTextField(
-                  text: "text",
-                  valid: "",
-                  controller: emailOrPhoneController,
-                  icons: Icons.email,
-                  keyboard: TextInputType.text,
-                  hintText: "ইমেইল",
-                ),
+                CustomTextField(controller: emailOrPhoneController, label: "Email",prefixIcon: Icon(Icons.email),),
                 const SizedBox(height: 20),
-                CustomPasswordField(
-                  hintText: 'পাসওয়ার্ড',
-                  valid: "",
-                  controller: passwordController,
-                  icons: Icons.lock,
-                  surfixIcons: Icons.visibility,
-                  keyboard: TextInputType.text,
-                ),
+                CustomPasswordField(valid: "", controller: passwordController,         icons: Icons.lock,
+                    surfixIcons: Icons.visibility,
+                    hintText: "Password",
+                    keyboard: TextInputType.text),
                 const SizedBox(height: 20),
 
                 // Show new password field only after reset
@@ -117,98 +101,79 @@ class _LoginScreenState extends State<LoginScreen> {
                     icons: Icons.lock_outline,
                     keyboard: TextInputType.text,
                   ),
+                const SizedBox(height: 20),
+                CustomElevatedButton(buttonName: 'Login',         onPressed: () {
+                  if (isConnected) {
+                    // Ensure email and password fields are not empty
+                    if (emailOrPhoneController.text.isNotEmpty &&
+                        passwordController.text.isNotEmpty) {
+                      // Attempt to log the user in
+                      authController.loginUser(
+                        email: emailOrPhoneController.text,
+                        password: passwordController.text,
+                      );
+                    } else {
+                      // Show error snackbar if fields are empty
+                      Get.snackbar(
+                        "Error",
+                        "Please enter you email & password",
+                        snackPosition: SnackPosition.BOTTOM,
+                      );
+                    }
+                  } else {
+                    // Show error snackbar if there's no internet connection
+                    Get.snackbar(
+                      "Error",
+                      "No internet connection.Please turn on internet",
+                      snackPosition: SnackPosition.BOTTOM,
+                    );
+                  }
+                },
+                ),
                 const SizedBox(height: 10),
-
                 Align(
-                  alignment: Alignment.bottomRight,
+                  alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () {
-                      // Get.toNamed(ForgetPasswordScreen.name);
+                      Get.toNamed("/forgetpassword");
                     },
                     child: const Text(
-                      "পাসওয়ার্ড ভুলে গেছি?",
+                      "Forgot Password?",
                       style: TextStyle(color: Colors.red),
                     ),
                   ),
                 ),
                 const SizedBox(height: 40),
-
-                Center(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 40,
-                        vertical: 20,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      backgroundColor: Color(0xff1B353C),
-                    ),
-                    onPressed: () {
-                      if (isConnected) {
-                        // Ensure email and password fields are not empty
-                        if (emailOrPhoneController.text.isNotEmpty &&
-                            passwordController.text.isNotEmpty) {
-                          // Attempt to log the user in
-                          authController.loginUser(
-                            email: emailOrPhoneController.text,
-                            password: passwordController.text,
-                          );
-                        } else {
-                          // Show error snackbar if fields are empty
-                          Get.snackbar(
-                            "ত্রুটি",
-                            "দয়া করে আপনার ইমেল এবং পাসওয়ার্ড লিখুন।",
-                            snackPosition: SnackPosition.BOTTOM,
-                          );
-                        }
-                      } else {
-                        // Show error snackbar if there's no internet connection
-                        Get.snackbar(
-                          "ত্রুটি",
-                          "ইন্টারনেট সংযোগ নেই। অনুগ্রহ করে ইন্টারনেটে সংযোগ করুন।",
-                          snackPosition: SnackPosition.BOTTOM,
-                        );
-                      }
-                    },
-
-                    child: Text(
-                      "সাইন ইন",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 20),
                 Center(
                   child: RichText(
+
                     text: TextSpan(
-                      text: "কোন অ্যাকাউন্ট নেই?",
+                      text: "Don’t have an account? ",
                       style: const TextStyle(color: Colors.black87),
                       children: [
                         TextSpan(
-                          text: " সাইন আপ",
+                          text: "Sign Up",
                           style: const TextStyle(
+                            color: AppColors.accentColor,
                             fontWeight: FontWeight.bold,
-                            color: Colors.blue,
                           ),
-                          recognizer:
-                          TapGestureRecognizer()
+                          recognizer: TapGestureRecognizer()
                             ..onTap = () {
-                         Get.toNamed(SignupScreen.name);
+                              Get.toNamed("signup");
                             },
                         ),
                       ],
                     ),
                   ),
                 ),
+
+
                 const SizedBox(height: 20),
                 const Divider(),
                 const SizedBox(height: 20),
 
                 /// Social Icons
-                // const SocialIcons(),
+                const SocialIcons(),
               ],
             ),
           ),

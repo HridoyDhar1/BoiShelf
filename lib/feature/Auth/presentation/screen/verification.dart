@@ -1,12 +1,13 @@
-import 'package:assignment/core/constants/app_colors.dart';
-import 'package:assignment/core/constants/app_string.dart';
-import 'package:assignment/core/wigets/custom_button.dart';
-import 'package:assignment/feature/auth/presentation/screens/reset_password_screen.dart';
-import 'package:assignment/feature/auth/presentation/screens/subscription_screen.dart';
+
+import 'package:book/feature/Auth/presentation/screen/reset.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pin_code_text_field/pin_code_text_field.dart';
 import 'dart:async';
+
+import '../../../../core/constant/app_color.dart';
+import '../../../../core/constant/app_texts.dart';
+import '../../../../core/widget/custom_button.dart';
 
 class VerificationCodeScreen extends StatefulWidget {
   const VerificationCodeScreen({super.key});
@@ -54,7 +55,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -62,11 +63,11 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(height: 20),
+              const SizedBox(height: 120),
               const Text(
                 "Enter Your Verification Code",
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Colors.black87,
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
                 ),
@@ -75,7 +76,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
               const Text(
                 "Sed varius eget arcu posuere varius tincidunt lectus. Eros justo sollicitudin egestas lorem ipsum. Bibendum.",
                 style: TextStyle(
-                  color: Colors.white70,
+                  color: Colors.black87,
                   fontSize: 16,
                 ),
                 textAlign: TextAlign.center,
@@ -108,7 +109,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                         TextSpan(
                           text: '${_remainingTime.value}s',
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: Colors.black87,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -144,7 +145,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
               CustomElevatedButton(
                 buttonName: "Verify Now",
                 onPressed: () {
-             Get.toNamed(SubscriptionScreen.name);
+             Get.toNamed(ResetPasswordScreen.name);
                 }
               ),
               const SizedBox(height: 10),

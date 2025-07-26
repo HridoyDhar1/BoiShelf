@@ -1,9 +1,10 @@
-import 'package:assignment/core/constants/app_colors.dart';
-import 'package:assignment/core/wigets/custom_button.dart';
-import 'package:assignment/core/wigets/custom_text_form_fields.dart';
-import 'package:assignment/feature/auth/presentation/screens/subscription_screen.dart';
+
+import 'package:book/navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../../../core/widget/custom_button.dart';
+import '../../../../core/widget/custom_textfield.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key});
@@ -17,7 +18,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
-      backgroundColor: AppColors.themeColor,
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: SafeArea(
           child: Padding(
@@ -44,12 +45,12 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 ),
 
                 const SizedBox(height: 40),
-                CustomTextFormFields(controller:passwordController,labelText: 'Enter New password',isPassword: true),
+                CustomTextFormFields(controller:passwordController,hintText: 'Enter New password',isPassword: true, valid: 'Please enter password',),
                 const SizedBox(height: 20),
-                CustomTextFormFields(controller:confrimPasswordController,labelText: 'Confirm Password',isPassword: true),
+                CustomTextFormFields(controller:confrimPasswordController,hintText: 'Confirm Password',isPassword: true, valid: 'Please enter password again',),
                 const SizedBox(height: 20),
                 CustomElevatedButton(buttonName: 'Reset Now', onPressed: () {
-                  Get.toNamed(SubscriptionScreen.name);
+                  Get.toNamed(CustomNavigationScreen.name);
                 },),
                 const SizedBox(height: 10),
 

@@ -1,8 +1,10 @@
-import 'package:assignment/core/wigets/custom_button.dart';
-import 'package:assignment/core/wigets/custom_text_form_fields.dart';
-import 'package:assignment/feature/auth/presentation/screens/verification_code_screen.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+
+import '../../../../core/widget/custom_button.dart';
+import '../../../../core/widget/custom_textfield.dart';
 
 class ForgetPasswordScreen extends StatefulWidget {
   const ForgetPasswordScreen({super.key});
@@ -14,18 +16,20 @@ final TextEditingController forgetEmailController=TextEditingController();
 class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body:
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body:
     SafeArea(
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 20),
+            const SizedBox(height: 120),
             const Text(
               "Forget Password",
               style: TextStyle(
-                color: Colors.white,
+                color: Colors.black87,
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
               ),
@@ -34,15 +38,15 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
             const Text(
               "No worries, we’ll send you reset instructions.",
               style: TextStyle(
-                color: Colors.white,
+                color: Colors.black87,
                 fontSize: 16,
               ),
             ),
             const SizedBox(height: 30),
             CustomTextFormFields(
               controller: forgetEmailController,
-              labelText: 'Enter your mail address',
-              suffixIcon: const Icon(Icons.email, color: Colors.white),
+              hintText: 'Enter your mail address',
+              suffixIcon: const Icon(Icons.email, color: Colors.black87), valid: 'Enter your email',
             ),
 
 
@@ -50,7 +54,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
             CustomElevatedButton(
               buttonName: "Get Code",
               onPressed: () {
-                Get.toNamed(VerificationCodeScreen.name);
+                Get.toNamed( "/verification");
               },
             ),
 

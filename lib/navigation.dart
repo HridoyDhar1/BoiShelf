@@ -22,6 +22,7 @@ class CustomNavigationScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Obx(() {
+
         return IndexedStack(
           index: navigationController.selectedIndex.value,
           children: [

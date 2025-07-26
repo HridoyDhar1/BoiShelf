@@ -1,56 +1,74 @@
 import 'package:flutter/material.dart';
 
-class CustomTextField extends StatelessWidget {
-  const CustomTextField({
-    super.key,
-    required this.text,
-    required this.valid,
-    required this.controller,
-    required this.icons,
-    this.hintText,
-    this.surfixIcons,
-    required this.keyboard,
-    this.labelText,
-    this.onChanged, // ✅ Add onChanged callback
-  });
+import '../constant/app_color.dart';
 
-  final String text;
+
+class CustomTextFormFields extends StatefulWidget {
+  const CustomTextFormFields({
+    super.key,
+    required this.controller,
+    this.hintText,
+    this.isPassword = false,
+    this.suffixIcon, this.prefixIcon, required this.valid,
+
+  });
+final Widget?prefixIcon;
   final String valid;
   final TextEditingController controller;
-  final IconData icons;
   final String? hintText;
-  final String? labelText;
-  final IconData? surfixIcons;
-  final TextInputType keyboard;
-  final Function(String)? onChanged; // ✅ Allow passing a function
+  final bool isPassword;
+  final Widget? suffixIcon;
+
+  @override
+  State<CustomTextFormFields> createState() => _CustomTextFormFieldsState();
+}
+
+class _CustomTextFormFieldsState extends State<CustomTextFormFields> {
+  bool _isPasswordVisible = false;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: [
-          TextFormField(
-            controller: controller,
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            validator: (String? value) {
-              if (value?.isEmpty ?? true) {
-                return valid;
-              }
-              return null;
-            },
-            keyboardType: keyboard,
-            decoration: InputDecoration(
-              labelText: labelText,
-              hintText: hintText,
-              prefixIcon: Icon(icons),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            onChanged: onChanged, // ✅ Ensure this is triggered
+    return TextFormField(
+      validator:(value) {
+        if (value == null || value.trim().isEmpty) {
+          return widget.valid;
+        }
+        return null;
+      } ,
+      controller: widget.controller,
+      obscureText: widget.isPassword && !_isPasswordVisible,
+      style: const TextStyle(color: Colors.black87),
+      decoration: InputDecoration(
+        prefixIcon:widget.prefixIcon ,
+       hintText: widget.hintText,
+        labelStyle: const TextStyle(color: Colors.black87),
+        filled: false,
+
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Colors.black87),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Colors.black87),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: AppColors.themeColor, width: 2),
+        ),
+        suffixIcon: widget.isPassword
+            ? IconButton(
+          icon: Icon(
+            _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+            color: Colors.white,
           ),
-        ],
+          onPressed: () {
+            setState(() {
+              _isPasswordVisible = !_isPasswordVisible;
+            });
+          },
+        )
+            : widget.suffixIcon,
       ),
     );
   }

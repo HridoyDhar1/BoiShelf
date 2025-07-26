@@ -59,13 +59,13 @@ class _ExploreScreenState extends State<ExploreScreen> {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: GridView.builder(
-                      physics: const NeverScrollableScrollPhysics(), // Prevent nested scroll conflict
+                      physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 4,
                         crossAxisSpacing: 8,
                         mainAxisSpacing: 8,
-                        childAspectRatio: 0.50, // Adjust for image height
+                        childAspectRatio: 0.50,
                       ),
                       itemCount: books.length,
                       itemBuilder: (context, index) {

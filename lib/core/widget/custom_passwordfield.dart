@@ -8,11 +8,12 @@ class CustomPasswordField extends StatefulWidget {
     required this.controller,
     required this.icons,
     this.hintText,
+    this.labelText,
     this.surfixIcons,
     required this.keyboard,
   });
 
-
+final String?labelText;
   final String valid;
   final TextEditingController controller;
   final IconData icons;
@@ -33,7 +34,7 @@ class _CustomPasswordFieldState extends State<CustomPasswordField> {
       children: [
 
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(2.0),
           child: TextFormField(
             controller: widget.controller,
             obscureText: widget.surfixIcons != null ? _obscureText : false,
@@ -44,12 +45,13 @@ class _CustomPasswordFieldState extends State<CustomPasswordField> {
                 return widget.valid;
               }
               if(value.length!=8){
-                return "পাসওয়ার্ড অবশ্যই ৮ সংখ্যার হতে হবে";
+                return "Enter 8 digit password";
               }
               return null;
             },
             decoration: InputDecoration(
               hintText: widget.hintText,
+              labelText: widget.labelText,
               prefixIcon: Icon(widget.icons),
               suffixIcon: widget.surfixIcons != null
                   ? IconButton(
