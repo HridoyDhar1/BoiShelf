@@ -48,18 +48,23 @@
 
 ## 📸 Screenshots
 
-| Login | Home | Chat |
+| Login | Home | Chat | Explore | 
 |-------|------|----------------|
 ![iScreen Shoter - 20250805231719854](https://github.com/user-attachments/assets/96d83de0-ea83-493b-bc47-859705cf7c1e)
 
----
+![iScreen Shoter - 20250805232422994](https://github.com/user-attachments/assets/3595cd4b-2339-499e-b172-c532ce70f52a)
+
+![iScreen Shoter - 20250805232532776](https://github.com/user-attachments/assets/aabb71d8-dc3c-4d09-84ab-d4ea7458411e)
+
+![iScreen Shoter - 20250805232608559](https://github.com/user-attachments/assets/0172e74e-2fcf-401d-94e8-d45e3b0519a7)
 
 
 ## ⚙️ Architecture
 
 The app uses a hybrid **GetX + BLoC** architecture for optimized modularity, readability, and separation of concerns.
 
-![boishelf](https://github.com/user-attachments/assets/4ff96836-7b22-46fd-9938-3ca235475072)
+![boishelf](https://github.com/user-attachments/assets/4ff96836-7b22-46fd-9938-3ca235475072) 
+
 
 
 ##🧠 Future Plans
