@@ -48,9 +48,9 @@
 
 ## 📸 Screenshots
 
-| Login | Home | Video Playback |
+| Login | Home | Chat |
 |-------|------|----------------|
-> _Coming Soon_ – Add GIFs or screenshots of your app in action here to attract users and contributors.
+![iScreen Shoter - 20250805231719854](https://github.com/user-attachments/assets/96d83de0-ea83-493b-bc47-859705cf7c1e)
 
 ---
 
